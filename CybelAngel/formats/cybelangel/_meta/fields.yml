@@ -1,0 +1,168 @@
+# Report fields
+cybelangel.report.id:
+  description: Unique identifier of the CybelAngel report.
+  name: cybelangel.report.id
+  type: keyword
+
+cybelangel.report.incident_id:
+  description: Incident identifier associated with the report.
+  name: cybelangel.report.incident_id
+  type: keyword
+
+cybelangel.report.investigation_id:
+  description: Investigation identifier associated with the report.
+  name: cybelangel.report.investigation_id
+  type: keyword
+
+cybelangel.report.category:
+  description: High-level category of the report (e.g. data_leak, malware, exposed_asset).
+  name: cybelangel.report.category
+  type: keyword
+
+cybelangel.report.incident_type:
+  description: Specific incident type within the category.
+  name: cybelangel.report.incident_type
+  type: keyword
+
+cybelangel.report.module:
+  description: CybelAngel module that generated the report.
+  name: cybelangel.report.module
+  type: keyword
+
+cybelangel.report.report_type:
+  description: Type of report (standard, advanced, etc.).
+  name: cybelangel.report.report_type
+  type: keyword
+
+cybelangel.report.severity:
+  description: Severity level of the report (0=info, 1=low, 2=medium, 3=high, 4=critical).
+  name: cybelangel.report.severity
+  type: integer
+
+cybelangel.report.status:
+  description: Current status of the report (open, in_progress, resolved, etc.).
+  name: cybelangel.report.status
+  type: keyword
+
+cybelangel.report.abstract:
+  description: Short description summarising the findings of the report.
+  name: cybelangel.report.abstract
+  type: keyword
+
+cybelangel.report.malware_name:
+  description: Name of the malware identified in the report, if any.
+  name: cybelangel.report.malware_name
+  type: keyword
+
+cybelangel.report.malware_location:
+  description: Location where the malware was found.
+  name: cybelangel.report.malware_location
+  type: keyword
+
+cybelangel.report.machine_name:
+  description: Name of the machine involved in the incident.
+  name: cybelangel.report.machine_name
+  type: keyword
+
+cybelangel.report.user_session:
+  description: User session identifier related to the incident.
+  name: cybelangel.report.user_session
+  type: keyword
+
+cybelangel.report.keywords:
+  description: Keywords associated with the report.
+  name: cybelangel.report.keywords
+  type: keyword
+
+cybelangel.report.tags:
+  description: Tags assigned to the report.
+  name: cybelangel.report.tags
+  type: keyword
+
+cybelangel.report.origins:
+  description: Origins of the detected data or threat.
+  name: cybelangel.report.origins
+  type: keyword
+
+cybelangel.report.risks:
+  description: Risks identified in the report.
+  name: cybelangel.report.risks
+  type: keyword
+
+# Credential fields
+cybelangel.credential.id:
+  description: Unique identifier of the compromised credential record.
+  name: cybelangel.credential.id
+  type: keyword
+
+cybelangel.credential.username:
+  description: Compromised username or login.
+  name: cybelangel.credential.username
+  type: keyword
+
+cybelangel.credential.url:
+  description: URL associated with the compromised credential.
+  name: cybelangel.credential.url
+  type: keyword
+
+cybelangel.credential.source:
+  description: Source breach or leak where the credential was found.
+  name: cybelangel.credential.source
+  type: keyword
+
+cybelangel.credential.status:
+  description: Status of the credential (compromised, addressed).
+  name: cybelangel.credential.status
+  type: keyword
+
+# Claimed Attack fields
+cybelangel.claimed_attack.id:
+  description: Unique identifier of the claimed attack record.
+  name: cybelangel.claimed_attack.id
+  type: keyword
+
+cybelangel.claimed_attack.category:
+  description: Category of the claimed attack (data_leak, ddos, defacement, ransomware).
+  name: cybelangel.claimed_attack.category
+  type: keyword
+
+cybelangel.claimed_attack.countries:
+  description: Countries targeted by or associated with the claimed attack.
+  name: cybelangel.claimed_attack.countries
+  type: keyword
+
+cybelangel.claimed_attack.domains:
+  description: Domains targeted by the claimed attack.
+  name: cybelangel.claimed_attack.domains
+  type: keyword
+
+cybelangel.claimed_attack.industries:
+  description: Industries targeted by the claimed attack.
+  name: cybelangel.claimed_attack.industries
+  type: keyword
+
+cybelangel.claimed_attack.threat_actors:
+  description: Threat actor groups claiming responsibility for the attack.
+  name: cybelangel.claimed_attack.threat_actors
+  type: keyword
+
+cybelangel.claimed_attack.victims:
+  description: Victims of the claimed attack.
+  name: cybelangel.claimed_attack.victims
+  type: keyword
+
+# ECS extensions
+related.ip:
+  description: Related IP addresses.
+  name: related.ip
+  type: ip
+
+related.hosts:
+  description: Related hostnames.
+  name: related.hosts
+  type: keyword
+
+related.user:
+  description: Related user identifiers.
+  name: related.user
+  type: keyword

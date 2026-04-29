@@ -1,0 +1,26 @@
+{
+  "uuid": "49ac4a62-a2c8-45a1-9399-3272e6cf252b",
+  "name": "CybelAngel - Post Report Comment",
+  "description": "Post a comment on a CybelAngel report.",
+  "docker_parameters": "cybelangel_post_report_comment",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      },
+      "comment": {
+        "description": "Comment text",
+        "type": "string"
+      }
+    },
+    "required": ["report_id", "comment"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

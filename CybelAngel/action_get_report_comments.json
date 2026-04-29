@@ -1,0 +1,22 @@
+{
+  "uuid": "cc16eb64-0d13-4de2-bd3b-fe6a51123485",
+  "name": "CybelAngel - Get Report Comments",
+  "description": "Retrieve all comments for a CybelAngel report.",
+  "docker_parameters": "cybelangel_get_report_comments",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      }
+    },
+    "required": ["report_id"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "uuid": "c1870439-5cd1-4c27-b0de-a8df0c1dabd7",
+  "name": "CybelAngel - Get Mirror Details",
+  "description": "Retrieve mirror details for a CybelAngel report.",
+  "docker_parameters": "cybelangel_get_mirror_details",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      }
+    },
+    "required": ["report_id"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

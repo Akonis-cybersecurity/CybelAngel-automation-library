@@ -1,0 +1,27 @@
+{
+  "uuid": "09d93d3e-91cc-448f-9ea3-295b3bc8853d",
+  "name": "CybelAngel - Update Report Status",
+  "description": "Update the status of a single CybelAngel report.",
+  "docker_parameters": "cybelangel_update_report_status",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      },
+      "status": {
+        "description": "New status: draft, open, in_progress, resolved, discarded",
+        "type": "string",
+        "enum": ["draft", "open", "in_progress", "resolved", "discarded"]
+      }
+    },
+    "required": ["report_id", "status"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

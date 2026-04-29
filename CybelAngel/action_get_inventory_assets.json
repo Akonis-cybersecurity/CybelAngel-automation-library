@@ -1,0 +1,17 @@
+{
+  "uuid": "d658e488-e235-4187-b2ff-629e9bf6bcf1",
+  "name": "CybelAngel - Get Inventory Assets",
+  "description": "Retrieve ADM inventory assets from CybelAngel.",
+  "docker_parameters": "cybelangel_get_inventory_assets",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {},
+    "additionalProperties": true
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

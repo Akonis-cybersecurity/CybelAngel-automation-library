@@ -1,0 +1,35 @@
+{
+  "uuid": "da95d019-6485-4c17-bcbf-1efccb9addef",
+  "name": "CybelAngel - Fetch Reports",
+  "description": "Fetch new reports from CybelAngel using a sliding time window on created_at.",
+  "docker_parameters": "cybelangel_reports",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Fetch Reports configuration",
+    "type": "object",
+    "properties": {
+      "intake_key": {
+        "description": "Intake key to use when sending events",
+        "type": "string"
+      },
+      "intake_server": {
+        "description": "Intake server URL",
+        "default": "https://intake.sekoia.io",
+        "type": "string"
+      },
+      "frequency": {
+        "description": "Polling frequency in seconds",
+        "type": "integer",
+        "default": 60
+      },
+      "chunk_size": {
+        "description": "Number of events per push batch",
+        "type": "integer",
+        "default": 100
+      }
+    },
+    "required": [
+      "intake_key"
+    ]
+  }
+}

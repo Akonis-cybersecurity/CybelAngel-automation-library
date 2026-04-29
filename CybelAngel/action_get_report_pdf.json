@@ -1,0 +1,25 @@
+{
+  "uuid": "ba02b53a-7aec-4d1e-9bd6-16f11c928c95",
+  "name": "CybelAngel - Get Report PDF",
+  "description": "Download a CybelAngel report as a PDF (base64-encoded).",
+  "docker_parameters": "cybelangel_get_report_pdf",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      }
+    },
+    "required": ["report_id"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "content_base64": {"type": "string"},
+      "content_type": {"type": "string"}
+    }
+  }
+}

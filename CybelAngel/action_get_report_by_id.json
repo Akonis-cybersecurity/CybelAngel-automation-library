@@ -1,0 +1,22 @@
+{
+  "uuid": "7b99f838-885c-4895-aa2e-e2de146a1585",
+  "name": "CybelAngel - Get Report by ID",
+  "description": "Retrieve a CybelAngel report by its ID.",
+  "docker_parameters": "cybelangel_get_report_by_id",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      }
+    },
+    "required": ["report_id"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

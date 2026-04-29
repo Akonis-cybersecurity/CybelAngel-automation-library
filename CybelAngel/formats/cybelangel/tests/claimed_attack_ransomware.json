@@ -1,0 +1,53 @@
+{
+  "input": {
+    "message": "{\"id\":\"atk-001\",\"claimed_at\":\"2026-03-05T09:00:00Z\",\"category\":\"ransomware\",\"threat_actors\":[\"LockBit\"],\"victims\":[\"AcmeCorp\"],\"domains\":[\"acmecorp.com\"],\"countries\":[\"FR\"],\"industries\":[\"finance\"]}",
+    "sekoiaio": {
+      "intake": {
+        "dialect": "CybelAngel",
+        "dialect_uuid": "8d3c1d01-3e8b-4800-9f17-ad3dbfa8a515"
+      }
+    }
+  },
+  "expected": {
+    "message": "{\"id\":\"atk-001\",\"claimed_at\":\"2026-03-05T09:00:00Z\",\"category\":\"ransomware\",\"threat_actors\":[\"LockBit\"],\"victims\":[\"AcmeCorp\"],\"domains\":[\"acmecorp.com\"],\"countries\":[\"FR\"],\"industries\":[\"finance\"]}",
+    "@timestamp": "2026-03-05T09:00:00Z",
+    "event": {
+      "action": "ransomware-detected",
+      "category": ["threat"],
+      "dataset": "cybelangel.claimed_attack",
+      "kind": "alert",
+      "provider": "cybelangel",
+      "reason": "CybelAngel ransomware claimed attack",
+      "type": ["indicator"]
+    },
+    "cybelangel": {
+      "claimed_attack": {
+        "id": "atk-001",
+        "category": "ransomware",
+        "threat_actors": ["LockBit"],
+        "victims": ["AcmeCorp"],
+        "domains": ["acmecorp.com"],
+        "countries": ["FR"],
+        "industries": ["finance"]
+      }
+    },
+    "observer": {
+      "product": "Threat Intelligence",
+      "type": "application",
+      "vendor": "CybelAngel"
+    },
+    "threat": {
+      "actor": {
+        "name": "LockBit"
+      },
+      "indicator": {
+        "first_seen": "2026-03-05T09:00:00Z",
+        "provider": "cybelangel",
+        "type": "domain-name"
+      }
+    },
+    "related": {
+      "hosts": ["acmecorp.com"]
+    }
+  }
+}

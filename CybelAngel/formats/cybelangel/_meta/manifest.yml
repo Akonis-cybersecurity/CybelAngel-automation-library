@@ -1,0 +1,8 @@
+uuid: 8d3c1d01-3e8b-4800-9f17-ad3dbfa8a515
+name: CybelAngel
+slug: cybelangel
+description: "Events from the CybelAngel API. Covers security reports (data leaks, malware, exposed assets), compromised credential alerts, and threat intelligence claimed attacks."
+data_sources:
+  Third-party application logs: "Security reports, credential exposures and threat intelligence events from the CybelAngel API"
+automation_connector_uuid: da95d019-6485-4c17-bcbf-1efccb9addef
+automation_module_uuid: 4d602a02-be22-4986-bef2-54ebcf0dd939

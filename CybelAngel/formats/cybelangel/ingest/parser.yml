@@ -1,0 +1,557 @@
+name: cybelangel
+
+pipeline:
+  - name: parsed_event
+    description: JSON parsing stage
+    external:
+      name: json.parse-json
+      properties:
+        input_field: "{{ original.message }}"
+        output_field: message
+
+  - name: set_observer
+  - name: set_timestamp
+  - name: map_vendor_fields
+  - name: map_ecs_core
+  - name: ecs_categorization
+  - name: set_threat_indicator
+  - name: set_related
+  - name: cleanup
+
+stages:
+  set_observer:
+    actions:
+      # Report events (discriminated by report_type)
+      - set:
+          observer.type: "application"
+          observer.vendor: "CybelAngel"
+          observer.product: "Reports"
+        filter: "{{ parsed_event.message.report_type is defined }}"
+
+      # Credential events (discriminated by last_detection_date)
+      - set:
+          observer.type: "application"
+          observer.vendor: "CybelAngel"
+          observer.product: "Credentials"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined }}
+
+      # Claimed Attack events (discriminated by claimed_at)
+      - set:
+          observer.type: "application"
+          observer.vendor: "CybelAngel"
+          observer.product: "Threat Intelligence"
+        filter: "{{ parsed_event.message.claimed_at is defined }}"
+
+  set_timestamp:
+    actions:
+      # Report: primary timestamp from created_at
+      - set:
+          "@timestamp": >-
+            {%- set ts = parsed_event.message.created_at -%}
+            {{ ts if '.' in ts else ts.replace('Z', '.000000Z') }}
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.created_at is defined and
+             parsed_event.message.created_at is not none and
+             parsed_event.message.created_at is string }}
+
+      # Report: fallback detected_at
+      - set:
+          "@timestamp": >-
+            {%- set ts = parsed_event.message.detected_at -%}
+            {{ ts if '.' in ts else ts.replace('Z', '.000000Z') }}
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             final['@timestamp'] is not defined and
+             parsed_event.message.detected_at is defined and
+             parsed_event.message.detected_at is not none and
+             parsed_event.message.detected_at is string }}
+
+      # Credential: timestamp from last_detection_date
+      - set:
+          "@timestamp": >-
+            {%- set ts = parsed_event.message.last_detection_date -%}
+            {{ ts if '.' in ts else ts.replace('Z', '.000000Z') }}
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.last_detection_date is not none and
+             parsed_event.message.last_detection_date is string and
+             parsed_event.message.report_type is not defined }}
+
+      # Claimed Attack: timestamp from claimed_at
+      - set:
+          "@timestamp": >-
+            {%- set ts = parsed_event.message.claimed_at -%}
+            {{ ts if '.' in ts else ts.replace('Z', '.000000Z') }}
+        filter: >-
+          {{ parsed_event.message.claimed_at is defined and
+             parsed_event.message.claimed_at is not none and
+             parsed_event.message.claimed_at is string }}
+
+  map_vendor_fields:
+    actions:
+      # --- Report custom fields ---
+      - set:
+          event.id: "{{ parsed_event.message.id }}"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.id is defined }}"
+
+      - set:
+          cybelangel.report.incident_id: "{{ parsed_event.message.incident_id }}"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.incident_id is defined }}"
+
+      - set:
+          cybelangel.report.investigation_id: "{{ parsed_event.message.investigation_id }}"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.investigation_id is defined }}"
+
+      - set:
+          cybelangel.report.category: "{{ parsed_event.message.category }}"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.category is defined }}"
+
+      - set:
+          cybelangel.report.incident_type: "{{ parsed_event.message.incident_type }}"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.incident_type is defined }}"
+
+      - set:
+          cybelangel.report.module: "{{ parsed_event.message.module }}"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.module is defined }}"
+
+      - set:
+          cybelangel.report.report_type: "{{ parsed_event.message.report_type }}"
+        filter: "{{ parsed_event.message.report_type is defined }}"
+
+      - set:
+          event.severity: "{{ parsed_event.message.severity }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.severity is defined and
+             parsed_event.message.severity is not none }}
+
+      - set:
+          cybelangel.report.status: "{{ parsed_event.message.status }}"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.status is defined }}"
+
+      - set:
+          message: "{{ parsed_event.message.abstract }}"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.abstract is defined }}"
+
+      - set:
+          threat.software.name: "{{ parsed_event.message.malware_name }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.malware_name is defined and
+             parsed_event.message.malware_name is not none }}
+
+      - set:
+          file.path: "{{ parsed_event.message.malware_location }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.malware_location is defined and
+             parsed_event.message.malware_location is not none }}
+
+      - set:
+          host.hostname: "{{ parsed_event.message.machine_name }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.machine_name is defined and
+             parsed_event.message.machine_name is not none }}
+
+      - set:
+          user.name: "{{ parsed_event.message.user_session }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.user_session is defined and
+             parsed_event.message.user_session is not none and
+             final['user.name'] is not defined }}
+
+      - set:
+          cybelangel.report.keywords: "{{ parsed_event.message.keywords }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.keywords is defined and
+             parsed_event.message.keywords is not none }}
+
+      - set:
+          tags: "{{ parsed_event.message.tags }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.tags is defined and
+             parsed_event.message.tags is not none }}
+
+      - set:
+          cybelangel.report.origins: "{{ parsed_event.message.origins }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.origins is defined and
+             parsed_event.message.origins is not none }}
+
+      - set:
+          cybelangel.report.risks: "{{ parsed_event.message.risks }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.risks is defined and
+             parsed_event.message.risks is not none }}
+
+      # --- Credential custom fields ---
+      - set:
+          event.id: "{{ parsed_event.message.id }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.id is defined }}
+
+      - set:
+          cybelangel.credential.source: "{{ parsed_event.message.source }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.source is defined and
+             parsed_event.message.source is not none }}
+
+      - set:
+          event.outcome: "unknown"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.status == 'compromised' }}
+
+      - set:
+          event.outcome: "success"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.status == 'addressed' }}
+
+      # --- Claimed Attack custom fields ---
+      - set:
+          event.id: "{{ parsed_event.message.id }}"
+        filter: "{{ parsed_event.message.claimed_at is defined and parsed_event.message.id is defined }}"
+
+      - set:
+          cybelangel.claimed_attack.countries: "{{ parsed_event.message.countries }}"
+        filter: >-
+          {{ parsed_event.message.claimed_at is defined and
+             parsed_event.message.countries is defined and
+             parsed_event.message.countries is not none }}
+
+      - set:
+          cybelangel.claimed_attack.industries: "{{ parsed_event.message.industries }}"
+        filter: >-
+          {{ parsed_event.message.claimed_at is defined and
+             parsed_event.message.industries is defined and
+             parsed_event.message.industries is not none }}
+
+      - set:
+          cybelangel.claimed_attack.victims: "{{ parsed_event.message.victims }}"
+        filter: >-
+          {{ parsed_event.message.claimed_at is defined and
+             parsed_event.message.victims is defined and
+             parsed_event.message.victims is not none }}
+
+  map_ecs_core:
+    actions:
+      # Report: source IP and port
+      - set:
+          source.ip: "{{ parsed_event.message.ip }}"
+          source.address: "{{ parsed_event.message.ip }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.ip is defined and
+             parsed_event.message.ip is not none }}
+
+      - set:
+          source.port: "{{ parsed_event.message.port }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.port is defined and
+             parsed_event.message.port is not none }}
+
+      # Report: geo fields
+      - set:
+          source.geo.country_iso_code: "{{ parsed_event.message.country_code }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.country_code is defined and
+             parsed_event.message.country_code is not none }}
+
+      - set:
+          source.geo.city_name: "{{ parsed_event.message.city }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.city is defined and
+             parsed_event.message.city is not none }}
+
+      # Report: destination from hostnames[0]
+      - set:
+          destination.domain: "{{ parsed_event.message.hostnames[0] }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.hostnames is defined and
+             parsed_event.message.hostnames is not none and
+             parsed_event.message.hostnames | length > 0 }}
+
+      # Report: url
+      - set:
+          url.full: "{{ parsed_event.message.url }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.url is defined and
+             parsed_event.message.url is not none }}
+
+      # Report: event severity name (0=info,1=low,2=medium,3=high,4=critical)
+      - set:
+          event.severity_name: "info"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.severity == 0 }}"
+
+      - set:
+          event.severity_name: "low"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.severity == 1 }}"
+
+      - set:
+          event.severity_name: "medium"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.severity == 2 }}"
+
+      - set:
+          event.severity_name: "high"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.severity == 3 }}"
+
+      - set:
+          event.severity_name: "critical"
+        filter: "{{ parsed_event.message.report_type is defined and parsed_event.message.severity == 4 }}"
+
+      # Credential: user fields
+      - set:
+          user.name: "{{ parsed_event.message.username }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.username is defined and
+             parsed_event.message.username is not none }}
+
+      - set:
+          user.email: "{{ parsed_event.message.email }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.email is defined and
+             parsed_event.message.email is not none }}
+
+      # Credential: url
+      - set:
+          url.full: "{{ parsed_event.message.url }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.url is defined and
+             parsed_event.message.url is not none }}
+
+      # Claimed Attack: threat actor
+      - set:
+          threat.actor.name: "{{ parsed_event.message.threat_actors[0] }}"
+        filter: >-
+          {{ parsed_event.message.claimed_at is defined and
+             parsed_event.message.threat_actors is defined and
+             parsed_event.message.threat_actors is not none and
+             parsed_event.message.threat_actors | length > 0 }}
+
+  ecs_categorization:
+    actions:
+      # Report: alert, intrusion_detection
+      - set:
+          event.provider: "cybelangel"
+          event.dataset: "cybelangel.report"
+          event.action: "report-created"
+          event.kind: "alert"
+          event.category: "{{ ['intrusion_detection'] }}"
+          event.type: "{{ ['indicator'] }}"
+        filter: "{{ parsed_event.message.report_type is defined }}"
+
+      - set:
+          event.reason: "{{ parsed_event.message.title }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.title is defined and
+             parsed_event.message.title is not none }}
+
+      # Credential: alert, authentication
+      - set:
+          event.provider: "cybelangel"
+          event.dataset: "cybelangel.credential"
+          event.action: "credential-exposed"
+          event.kind: "alert"
+          event.category: "{{ ['authentication'] }}"
+          event.type: "{{ ['indicator'] }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined }}
+
+      # Claimed Attack: alert by default, threat
+      - set:
+          event.provider: "cybelangel"
+          event.dataset: "cybelangel.claimed_attack"
+          event.kind: "alert"
+          event.category: "{{ ['threat'] }}"
+          event.type: "{{ ['indicator'] }}"
+        filter: "{{ parsed_event.message.claimed_at is defined }}"
+
+      # Claimed Attack: action per category
+      - set:
+          event.action: "ransomware-detected"
+        filter: "{{ parsed_event.message.claimed_at is defined and parsed_event.message.category == 'ransomware' }}"
+
+      - set:
+          event.action: "ddos-detected"
+        filter: "{{ parsed_event.message.claimed_at is defined and parsed_event.message.category == 'ddos' }}"
+
+      - set:
+          event.action: "defacement-detected"
+        filter: "{{ parsed_event.message.claimed_at is defined and parsed_event.message.category == 'defacement' }}"
+
+      - set:
+          event.action: "data-leak-detected"
+          event.kind: "enrichment"
+        filter: "{{ parsed_event.message.claimed_at is defined and parsed_event.message.category == 'data_leak' }}"
+
+      - set:
+          event.reason: "CybelAngel {{ parsed_event.message.category }} claimed attack"
+        filter: >-
+          {{ parsed_event.message.claimed_at is defined and
+             parsed_event.message.category is defined and
+             parsed_event.message.category is not none }}
+
+  set_threat_indicator:
+    actions:
+      # Report: IP indicator
+      - set:
+          threat.indicator.type: "ipv4-addr"
+          threat.indicator.ip: "{{ parsed_event.message.ip }}"
+          threat.indicator.provider: "cybelangel"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.ip is defined and
+             parsed_event.message.ip is not none }}
+
+      # Report: domain indicator fallback (no IP, but hostname present)
+      - set:
+          threat.indicator.type: "domain-name"
+          threat.indicator.provider: "cybelangel"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             (parsed_event.message.ip is not defined or parsed_event.message.ip is none) and
+             parsed_event.message.hostnames is defined and
+             parsed_event.message.hostnames is not none and
+             parsed_event.message.hostnames | length > 0 }}
+
+      - set:
+          threat.indicator.first_seen: "{{ parsed_event.message.detected_at }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.detected_at is defined and
+             parsed_event.message.detected_at is not none }}
+
+      - set:
+          threat.indicator.last_seen: "{{ parsed_event.message.updated_at }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.updated_at is defined and
+             parsed_event.message.updated_at is not none }}
+
+      - set:
+          threat.indicator.description: "{{ parsed_event.message.abstract }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.abstract is defined and
+             parsed_event.message.abstract is not none }}
+
+      # Credential: email-addr indicator
+      - set:
+          threat.indicator.type: "email-addr"
+          threat.indicator.email.address: "{{ parsed_event.message.email }}"
+          threat.indicator.provider: "cybelangel"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.email is defined and
+             parsed_event.message.email is not none }}
+
+      # Credential: url indicator fallback
+      - set:
+          threat.indicator.type: "url"
+          threat.indicator.url.full: "{{ parsed_event.message.url }}"
+          threat.indicator.provider: "cybelangel"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             (parsed_event.message.email is not defined or parsed_event.message.email is none) and
+             parsed_event.message.url is defined and
+             parsed_event.message.url is not none }}
+
+      - set:
+          threat.indicator.first_seen: "{{ parsed_event.message.last_detection_date }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.last_detection_date is not none }}
+
+      # Claimed Attack: domain-name indicator from domains[0]
+      - set:
+          threat.indicator.type: "domain-name"
+          threat.indicator.provider: "cybelangel"
+          threat.indicator.first_seen: "{{ parsed_event.message.claimed_at }}"
+        filter: >-
+          {{ parsed_event.message.claimed_at is defined and
+             parsed_event.message.domains is defined and
+             parsed_event.message.domains is not none and
+             parsed_event.message.domains | length > 0 }}
+
+  set_related:
+    actions:
+      # Report: related.ip from source IP
+      - set:
+          related.ip: "{{ (final.related.ip | default([])) + [parsed_event.message.ip] }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.ip is defined and
+             parsed_event.message.ip is not none }}
+
+      # Report: related.hosts from hostnames
+      - set:
+          related.hosts: "{{ (final.related.hosts | default([])) + parsed_event.message.hostnames }}"
+        filter: >-
+          {{ parsed_event.message.report_type is defined and
+             parsed_event.message.hostnames is defined and
+             parsed_event.message.hostnames is not none and
+             parsed_event.message.hostnames | length > 0 }}
+
+      # Credential: related.user from username
+      - set:
+          related.user: "{{ (final.related.user | default([])) + [parsed_event.message.username] }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.username is defined and
+             parsed_event.message.username is not none }}
+
+      # Credential: related.user from email
+      - set:
+          related.user: "{{ (final.related.user | default([])) + [parsed_event.message.email] }}"
+        filter: >-
+          {{ parsed_event.message.last_detection_date is defined and
+             parsed_event.message.report_type is not defined and
+             parsed_event.message.email is defined and
+             parsed_event.message.email is not none }}
+
+      # Claimed Attack: related.hosts from domains
+      - set:
+          related.hosts: "{{ (final.related.hosts | default([])) + parsed_event.message.domains }}"
+        filter: >-
+          {{ parsed_event.message.claimed_at is defined and
+             parsed_event.message.domains is defined and
+             parsed_event.message.domains is not none and
+             parsed_event.message.domains | length > 0 }}
+
+  cleanup:
+    actions:
+      - delete:
+          - parsed_event

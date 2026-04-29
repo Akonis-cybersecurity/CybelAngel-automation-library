@@ -1,0 +1,26 @@
+{
+  "uuid": "2717525a-799d-4bca-99a6-c5986c464748",
+  "name": "CybelAngel - Update Inventory Asset Status",
+  "description": "Update the status of a CybelAngel ADM inventory asset.",
+  "docker_parameters": "cybelangel_update_inventory_asset_status",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "asset_id": {
+        "description": "ADM asset ID",
+        "type": "string"
+      },
+      "status": {
+        "description": "New status for the asset",
+        "type": "string"
+      }
+    },
+    "required": ["asset_id", "status"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

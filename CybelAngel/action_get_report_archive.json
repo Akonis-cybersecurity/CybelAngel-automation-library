@@ -1,0 +1,25 @@
+{
+  "uuid": "454ea839-e6c5-4e5c-8e5e-a8c0fdf15504",
+  "name": "CybelAngel - Get Report Archive",
+  "description": "Download a CybelAngel report archive (base64-encoded ZIP).",
+  "docker_parameters": "cybelangel_get_report_archive",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      }
+    },
+    "required": ["report_id"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "content_base64": {"type": "string"},
+      "content_type": {"type": "string"}
+    }
+  }
+}

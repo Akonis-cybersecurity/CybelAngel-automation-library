@@ -1,0 +1,71 @@
+{
+  "input": {
+    "message": "{\"id\":\"rpt-001\",\"incident_id\":\"inc-001\",\"report_type\":\"standard\",\"category\":\"data_leak\",\"incident_type\":\"exposed_credentials\",\"module\":\"darkweb\",\"severity\":3,\"status\":\"open\",\"title\":\"Exposed credentials on darkweb forum\",\"abstract\":\"Employee credentials were found on a darkweb forum.\",\"created_at\":\"2026-01-15T10:30:00Z\",\"detected_at\":\"2026-01-14T08:00:00Z\",\"updated_at\":\"2026-01-15T10:30:00Z\",\"ip\":\"198.51.100.42\",\"port\":443,\"country_code\":\"RU\",\"city\":\"Moscow\",\"hostnames\":[\"darkforum.example.onion\"],\"keywords\":[\"credentials\",\"employee\"],\"tags\":[\"darkweb\",\"leak\"],\"url\":null}",
+    "sekoiaio": {
+      "intake": {
+        "dialect": "CybelAngel",
+        "dialect_uuid": "8d3c1d01-3e8b-4800-9f17-ad3dbfa8a515"
+      }
+    }
+  },
+  "expected": {
+    "message": "{\"id\":\"rpt-001\",\"incident_id\":\"inc-001\",\"report_type\":\"standard\",\"category\":\"data_leak\",\"incident_type\":\"exposed_credentials\",\"module\":\"darkweb\",\"severity\":3,\"status\":\"open\",\"title\":\"Exposed credentials on darkweb forum\",\"abstract\":\"Employee credentials were found on a darkweb forum.\",\"created_at\":\"2026-01-15T10:30:00Z\",\"detected_at\":\"2026-01-14T08:00:00Z\",\"updated_at\":\"2026-01-15T10:30:00Z\",\"ip\":\"198.51.100.42\",\"port\":443,\"country_code\":\"RU\",\"city\":\"Moscow\",\"hostnames\":[\"darkforum.example.onion\"],\"keywords\":[\"credentials\",\"employee\"],\"tags\":[\"darkweb\",\"leak\"],\"url\":null}",
+    "@timestamp": "2026-01-15T10:30:00Z",
+    "event": {
+      "action": "report-created",
+      "category": ["intrusion_detection"],
+      "dataset": "cybelangel.report",
+      "kind": "alert",
+      "provider": "cybelangel",
+      "reason": "Exposed credentials on darkweb forum",
+      "severity_name": "high",
+      "type": ["indicator"]
+    },
+    "cybelangel": {
+      "report": {
+        "id": "rpt-001",
+        "incident_id": "inc-001",
+        "report_type": "standard",
+        "category": "data_leak",
+        "incident_type": "exposed_credentials",
+        "module": "darkweb",
+        "severity": 3,
+        "status": "open",
+        "abstract": "Employee credentials were found on a darkweb forum.",
+        "keywords": ["credentials", "employee"],
+        "tags": ["darkweb", "leak"]
+      }
+    },
+    "observer": {
+      "product": "Reports",
+      "type": "application",
+      "vendor": "CybelAngel"
+    },
+    "source": {
+      "address": "198.51.100.42",
+      "geo": {
+        "city_name": "Moscow",
+        "country_iso_code": "RU"
+      },
+      "ip": "198.51.100.42",
+      "port": 443
+    },
+    "destination": {
+      "domain": "darkforum.example.onion"
+    },
+    "threat": {
+      "indicator": {
+        "description": "Employee credentials were found on a darkweb forum.",
+        "first_seen": "2026-01-14T08:00:00Z",
+        "ip": "198.51.100.42",
+        "last_seen": "2026-01-15T10:30:00Z",
+        "provider": "cybelangel",
+        "type": "ipv4-addr"
+      }
+    },
+    "related": {
+      "hosts": ["darkforum.example.onion"],
+      "ip": ["198.51.100.42"]
+    }
+  }
+}

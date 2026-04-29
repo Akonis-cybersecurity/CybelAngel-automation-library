@@ -1,0 +1,22 @@
+{
+  "uuid": "894aa839-2527-463a-89e3-ce86dd1835be",
+  "name": "CybelAngel - Get Report Attachments",
+  "description": "Retrieve the list of attachments for a CybelAngel report.",
+  "docker_parameters": "cybelangel_get_report_attachments",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      }
+    },
+    "required": ["report_id"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

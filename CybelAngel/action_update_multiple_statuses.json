@@ -1,0 +1,33 @@
+{
+  "uuid": "339538df-ecc7-4c8c-8133-1dcc815539f0",
+  "name": "CybelAngel - Update Multiple Report Statuses",
+  "description": "Bulk update the status of multiple CybelAngel reports.",
+  "docker_parameters": "cybelangel_update_multiple_statuses",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "updates": {
+        "description": "List of {report_id, status} objects",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "report_id": {"type": "string"},
+            "status": {
+              "type": "string",
+              "enum": ["draft", "open", "in_progress", "resolved", "discarded"]
+            }
+          },
+          "required": ["report_id", "status"]
+        }
+      }
+    },
+    "required": ["updates"]
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

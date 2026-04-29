@@ -1,0 +1,23 @@
+{
+  "uuid": "de082c45-f759-4bef-898f-a8f32d65cfbc",
+  "name": "CybelAngel - Create Remediation Request",
+  "description": "Create a remediation request for a CybelAngel report.",
+  "docker_parameters": "cybelangel_create_remediation_request",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "report_id": {
+        "description": "CybelAngel report ID",
+        "type": "string"
+      }
+    },
+    "required": ["report_id"],
+    "additionalProperties": true
+  },
+  "results": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {}
+  }
+}

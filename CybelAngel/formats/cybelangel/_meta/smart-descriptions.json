@@ -1,0 +1,35 @@
+[
+  {
+    "value": "CybelAngel report: {cybelangel.report.incident_type} ({event.severity_name})",
+    "conditions": [
+      { "field": "cybelangel.report.incident_type" },
+      { "field": "event.severity_name" }
+    ]
+  },
+  {
+    "value": "Compromised credential for {user.email} on {cybelangel.credential.source}",
+    "conditions": [
+      { "field": "user.email" },
+      { "field": "cybelangel.credential.source" }
+    ]
+  },
+  {
+    "value": "Compromised credential for {user.name}",
+    "conditions": [
+      { "field": "user.name" }
+    ]
+  },
+  {
+    "value": "{cybelangel.claimed_attack.category} claimed by {threat.actor.name}",
+    "conditions": [
+      { "field": "cybelangel.claimed_attack.category" },
+      { "field": "threat.actor.name" }
+    ]
+  },
+  {
+    "value": "Claimed attack: {cybelangel.claimed_attack.category}",
+    "conditions": [
+      { "field": "cybelangel.claimed_attack.category" }
+    ]
+  }
+]

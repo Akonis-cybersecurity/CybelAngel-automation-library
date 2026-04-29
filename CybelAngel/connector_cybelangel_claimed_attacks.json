@@ -1,0 +1,42 @@
+{
+  "uuid": "87ed6501-07a5-44bc-9e69-8e0b32f136c0",
+  "name": "CybelAngel - Fetch Claimed Attacks",
+  "description": "Fetch threat intelligence claimed attacks from CybelAngel using limit/skip pagination.",
+  "docker_parameters": "cybelangel_claimed_attacks",
+  "arguments": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Fetch Claimed Attacks configuration",
+    "type": "object",
+    "properties": {
+      "intake_key": {
+        "description": "Intake key to use when sending events",
+        "type": "string"
+      },
+      "intake_server": {
+        "description": "Intake server URL",
+        "default": "https://intake.sekoia.io",
+        "type": "string"
+      },
+      "frequency": {
+        "description": "Polling frequency in seconds",
+        "type": "integer",
+        "default": 60
+      },
+      "chunk_size": {
+        "description": "Number of events per push batch",
+        "type": "integer",
+        "default": 100
+      },
+      "limit": {
+        "description": "Number of claimed attacks per API page (1-1000)",
+        "type": "integer",
+        "default": 100,
+        "minimum": 1,
+        "maximum": 1000
+      }
+    },
+    "required": [
+      "intake_key"
+    ]
+  }
+}
